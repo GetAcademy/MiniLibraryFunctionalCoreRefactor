@@ -4,7 +4,7 @@ namespace MiniLibraryAfterCore.ApplicationServices
 {
     public class LibraryService
     {
-        public static Result<BorrowBookResult> BorrowBook(Book? book, BorrowerId borrowerId, bool borrowerAlreadyHasLoan)
+        public static Result<BorrowBookResult> BorrowBook(Book? book, BorrowerId borrowerId, bool borrowerAlreadyHasLoan, DateTime now)
         {
             if (book is null)
             {
@@ -21,18 +21,11 @@ namespace MiniLibraryAfterCore.ApplicationServices
                 return Result<BorrowBookResult>.Fail("Borrower already has an active loan.");
             }
 
-            var nextLoanId = loans.Count == 0
-                ? 1
-                : loans.Max(l => l.Id) + 1;
-
-            var now = DateTime.UtcNow;
-
             var loan = new Loan
             {
-                Id = nextLoanId,
                 BookId = book.Id,
                 BorrowerId = borrowerId,
-                BorrowedAtUtc = now,
+                BorrowedAt = now,
                 DueAtUtc = now.AddDays(14)
             };
 

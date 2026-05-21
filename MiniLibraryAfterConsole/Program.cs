@@ -38,13 +38,13 @@ public class LibraryApp
         var books = await LoadBooksAsync();
         var loans = await LoadLoansAsync();
 
-        var book = books.FirstOrDefault(b => b.Id == bookId.Id);
+        var book = books.FirstOrDefault(b => b.Id == bookId);
 
         var borrowerAlreadyHasLoan = loans.Any(l =>
-            l.BorrowerId == borrowerId.Id &&
+            l.BorrowerId == borrowerId &&
             l.ReturnedAtUtc is null);
 
-        var message = await LibraryService.BorrowBookAsync(book, borrowerId, borrowerAlreadyHasLoan);
+        var message = await LibraryService.BorrowBook(book, borrowerId, borrowerAlreadyHasLoan, DateTime.Now);
 
         Console.WriteLine(message);
     }

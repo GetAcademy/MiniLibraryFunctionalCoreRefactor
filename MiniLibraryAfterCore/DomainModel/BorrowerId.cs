@@ -1,6 +1,6 @@
 ﻿namespace MiniLibraryAfterCore.DomainModel
 {
-    public class BorrowerId
+    public record BorrowerId
     {
         public int Id { get; }
 
