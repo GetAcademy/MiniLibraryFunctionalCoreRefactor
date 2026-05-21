@@ -15,25 +15,16 @@ public class LibraryApp
     {
         await EnsureFilesExistAsync();
 
-        Console.Write("Book id: ");
-        var bookIdText = Console.ReadLine();
-        var bookIdResult = BookId.Create(bookIdText);
-        if (!bookIdResult.IsSuccess)
+        var bookAndBorrowerResult = AskForBookAndBorrower();
+        if (!bookAndBorrowerResult.IsSuccess)
         {
-            Console.WriteLine(bookIdResult.ErrorMessage);
+            Console.WriteLine(bookAndBorrowerResult.ErrorMessage);
             return;
         }
-        var bookId = bookIdResult.Value;
 
-        Console.Write("Borrower id: ");
-        var borrowerIdText = Console.ReadLine();
-        var borrowerIdResult = BorrowerId.Create(borrowerIdText);
-        if (!borrowerIdResult.IsSuccess)
-        {
-            Console.WriteLine(borrowerIdResult.ErrorMessage);
-            return;
-        }
-        var borrowerId = borrowerIdResult.Value!;
+        var bookAndBorrower = bookAndBorrowerResult.Value;
+        var bookId = bookAndBorrower!.Item1;
+        var borrowerId = bookAndBorrower!.Item2;
 
         var books = await LoadBooksAsync();
         var loans = await LoadLoansAsync();
@@ -63,6 +54,28 @@ public class LibraryApp
         await WriteReceiptAsync(borrowBookResult.Receipt);
 
         Console.WriteLine("Book borrowed.");
+    }
+
+    private Result<Tuple<BookId,BorrowerId>> AskForBookAndBorrower()
+    {
+        Console.Write("Book id: ");
+        var bookIdText = Console.ReadLine();
+        var bookIdResult = BookId.Create(bookIdText);
+        if (!bookIdResult.IsSuccess)
+        {
+            return Result<Tuple<BookId, BorrowerId>>.Fail(bookIdResult.ErrorMessage!);
+        }
+        var bookId = bookIdResult.Value;
+
+        Console.Write("Borrower id: ");
+        var borrowerIdText = Console.ReadLine();
+        var borrowerIdResult = BorrowerId.Create(borrowerIdText);
+        if (!borrowerIdResult.IsSuccess)
+        {
+            return Result<Tuple<BookId, BorrowerId>>.Fail(borrowerIdResult.ErrorMessage!);
+        }
+        var borrowerId = borrowerIdResult.Value!;
+        return Result<Tuple<BookId, BorrowerId>>.Success(new Tuple<BookId, BorrowerId>(bookId!, borrowerId));
     }
 
     private async Task<List<Book>> LoadBooksAsync()
