@@ -45,21 +45,22 @@ public class LibraryApp
             l.BorrowerId == borrowerId &&
             l.ReturnedAtUtc is null);
 
-        var borrowBookResult = LibraryService.BorrowBook(book, borrowerId, borrowerAlreadyHasLoan, DateTime.Now);
+        var borrowBookResultResult = LibraryService.BorrowBook(book, borrowerId, borrowerAlreadyHasLoan, DateTime.Now);
 
-        if (!borrowBookResult.IsSuccess)
+        if (!borrowBookResultResult.IsSuccess)
         {
-            Console.WriteLine(borrowBookResult.ErrorMessage);
+            Console.WriteLine(borrowBookResultResult.ErrorMessage);
             return;
         }
+        var borrowBookResult = borrowBookResultResult.Value!;
 
-        books[bookIndex] = borrowBookResult.Value.Book;
-        loans.Add(borrowBookResult.Value.Loan);
+        books[bookIndex] = borrowBookResult.Book;
+        loans.Add(borrowBookResult.Loan);
 
         await SaveLoansAsync(loans);
         await SaveBooksAsync(books);
 
-        await WriteReceiptAsync(borrowBookResult.Value.Receipt);
+        await WriteReceiptAsync(borrowBookResult.Receipt);
 
         Console.WriteLine("Book borrowed.");
     }
