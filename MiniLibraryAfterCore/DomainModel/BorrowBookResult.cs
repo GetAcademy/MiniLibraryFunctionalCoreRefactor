@@ -1,6 +1,6 @@
 ﻿namespace MiniLibraryAfterCore.DomainModel
 {
-    public record BorrowBookResult(Loan Load, Receipt Receipt)
+    public record BorrowBookResult(Loan Loan, Receipt Receipt, Book Book)
     {
     }
 }

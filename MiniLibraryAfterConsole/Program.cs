@@ -38,18 +38,31 @@ public class LibraryApp
         var books = await LoadBooksAsync();
         var loans = await LoadLoansAsync();
 
-        var book = books.FirstOrDefault(b => b.Id == bookId);
+        var bookIndex = books.FindIndex(b => b.Id == bookId);
+        var book = books[bookIndex];
 
         var borrowerAlreadyHasLoan = loans.Any(l =>
             l.BorrowerId == borrowerId &&
             l.ReturnedAtUtc is null);
 
-        var message = await LibraryService.BorrowBook(book, borrowerId, borrowerAlreadyHasLoan, DateTime.Now);
+        var borrowBookResult = LibraryService.BorrowBook(book, borrowerId, borrowerAlreadyHasLoan, DateTime.Now);
 
-        Console.WriteLine(message);
+        if (!borrowBookResult.IsSuccess)
+        {
+            Console.WriteLine(borrowBookResult.ErrorMessage);
+            return;
+        }
+
+        books[bookIndex] = borrowBookResult.Value.Book;
+        loans.Add(borrowBookResult.Value.Loan);
+
+        await SaveLoansAsync(loans);
+        await SaveBooksAsync(books);
+
+        await WriteReceiptAsync(borrowBookResult.Value.Receipt);
+
+        Console.WriteLine("Book borrowed.");
     }
-
-    
 
     private async Task<List<Book>> LoadBooksAsync()
     {

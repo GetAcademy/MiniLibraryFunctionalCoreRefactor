@@ -2,7 +2,7 @@
 {
     public record Receipt(
         string BookTitle,
-        int BorrowerId,
+        BorrowerId BorrowerId,
         DateTime DueAtUtc,
         string Message);
 }

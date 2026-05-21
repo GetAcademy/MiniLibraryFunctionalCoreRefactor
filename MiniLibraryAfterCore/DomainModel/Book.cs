@@ -1,9 +1,6 @@
 ﻿namespace MiniLibraryAfterCore.DomainModel
 {
-    public class Book
+    public record Book(BookId Id, string Title, bool IsAvailable)
     {
-        public BookId Id { get; set; }
-        public string Title { get; set; } = "";
-        public bool IsAvailable { get; set; }
     }
 }

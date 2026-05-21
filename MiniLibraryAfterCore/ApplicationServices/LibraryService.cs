@@ -28,13 +28,10 @@ namespace MiniLibraryAfterCore.ApplicationServices
                 BorrowedAt = now,
                 DueAtUtc = now.AddDays(14)
             };
+            
+            //book.IsAvailable = false;
+            book = book with { IsAvailable = true };
 
-            loans.Add(loan);
-
-            book.IsAvailable = false;
-
-            await SaveLoansAsync(loans);
-            await SaveBooksAsync(books);
 
             var receipt = new Receipt(
                 BookTitle: book.Title,
@@ -42,9 +39,7 @@ namespace MiniLibraryAfterCore.ApplicationServices
                 DueAtUtc: loan.DueAtUtc,
                 Message: $"You borrowed '{book.Title}'.");
 
-            await WriteReceiptAsync(receipt);
-
-            return "Book borrowed.";
+            return Result<BorrowBookResult>.Success(new BorrowBookResult(loan, receipt, book));
         }
     }
 }
