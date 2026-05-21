@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="MiniLibraryAfterConsole/MiniLibraryAfterConsole.csproj" />
+  <Project Path="MiniLibraryAfterCore/MiniLibraryAfterCore.csproj" />
+  <Project Path="MiniLibraryBeforeConsole/MiniLibraryBeforeConsole.csproj" />
+</Solution>
